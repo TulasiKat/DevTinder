@@ -3,22 +3,47 @@ const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
 
-app.use(express.json())
+app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-// console.log(req.body);
-// res.send("fetching")
+  // console.log(req.body);
+  // res.send("fetching")
 
   const user = new User(req.body);
 
   try {
     await user.save().then(() => {
-      res.send("entry added successfully");
+      res.send("User added successfully!");
     });
   } catch {
     (err) => {
       res.status(400).send("error while adding user");
     };
+  }
+});
+
+app.get("/feed", async (req, res) => {
+   try {
+    const user = await User.find({ });
+    if (user.length === 0){
+      res.status(404).send("User not found")
+    }
+    res.send(user)
+  } catch (err) {
+    res.status(400).send("something went wrong");
+  }
+});
+
+//find user by email
+app.get("/user", async (req, res) => {
+   try {
+    const user = await User.findOne({ emailId: req?.body?.emailId });
+    if (user.length === 0){
+      res.status(404).send("User not found")
+    }
+    res.send(user)
+  } catch (err) {
+    res.status(400).send("something went wrong");
   }
 });
 
