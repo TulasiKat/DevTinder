@@ -22,6 +22,8 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+
+//get all users
 app.get("/feed", async (req, res) => {
    try {
     const user = await User.find({ });
@@ -46,6 +48,50 @@ app.get("/user", async (req, res) => {
     res.status(400).send("something went wrong");
   }
 });
+
+
+// get user by id
+app.get("/user/:id", async (req, res) => {
+  const userId = req.params.id;
+   try {
+    const user = await User.findById(userId);
+    if (user.length === 0){
+      res.status(404).send("User not found")
+    }
+    res.send(user)
+  } catch (err) {
+    res.status(400).send("something went wrong");
+  }
+});
+
+
+//delete a user
+app.delete("/user" , async (req, res) => {
+  const userId = req.body.userId;
+  try{
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully")
+  }catch(err){
+ res.status(400).send("something went wrong");
+  }
+
+})
+
+
+//update data of a user
+app.patch("/user" , async (req, res) => {
+  const userId = req.body.userId;
+  const options = req.body.options;
+
+  console.log(userId, options)
+  try{
+    const user = await User.findByIdAndUpdate(userId,options);
+    res.send("User updated successfully")
+  }catch(err){
+ res.status(400).send("something went wrong");
+  }
+
+})
 
 connectDB()
   .then(() => {
